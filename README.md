@@ -15,3 +15,6 @@
 * backup: the weights generated
 * bad.list: bad list images
 * predictions.jpg
+
+## Net instruction
+* ``http://www.cnblogs.com/hansjorn/p/7491391.html``  
