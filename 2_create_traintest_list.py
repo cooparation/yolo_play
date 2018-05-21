@@ -6,16 +6,19 @@ from os import listdir, getcwd
 from os.path import join
 from random import shuffle
 
-TrainImgDir = '/home/liusj/deepLearning/yolov2_play/images'
+#TrainImgDir = '/home/liusj/deepLearning/yolov2_play/images'
+TrainImgDir = '/apps/liusj/datasets/handDatasets/Images'
 
+image_types = ['jpg', 'png']
 write_lines = []
 for root,dirs,files in os.walk(TrainImgDir):
     imgnum = 0
     for file in files:
-        imgnum += 1
-        filename = root + '/' + file
-        filename += '\n'
-        write_lines.append(filename)
+        if(file.split(".")[-1] in image_types):
+            imgnum += 1
+            filename = root + '/' + file
+            filename += '\n'
+            write_lines.append(filename)
 
 shuffle(write_lines)
 
