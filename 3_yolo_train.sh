@@ -1,4 +1,5 @@
 #!/bin/bash
-./darknet -i 1 detector train \
+./darknet detector train \
     cfg/train_test_name.data \
-    cfg/yolo-voc.cfg darknet19_448.conv.23
+    cfg/yolov3-tiny.cfg ./pretrained_models/yolo/yolov3-tiny.weights \
+    -gpus 0,1,2,3 >>log.txt

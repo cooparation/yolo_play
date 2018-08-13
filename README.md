@@ -1,4 +1,5 @@
 # YOLOV2 study project
+## details to see [YOLO](https://pjreddie.com/darknet/yolo/)
 
 ## Deps
 * git: https://github.com/pjreddie/darknet.git

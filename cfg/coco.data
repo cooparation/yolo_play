@@ -1,0 +1,8 @@
+classes= 80
+#train  = data/train.txt
+#valid  = coco_testdev
+#valid = data/test.txt
+names = data/coco.names
+backup = /apps/liusj/snapshot/
+eval=coco
+
