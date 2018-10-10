@@ -1,34 +1,30 @@
 # coding=utf-8
-# 本工具和category命令结合使用
-# category是在detector.c中新增的命令，主要作用是生成每类物体的evalute结果
-# 执行命令 ./darknet detector category cfg/paul.data cfg/yolo-paul.cfg backup/yolo-paul_final.weights
-# result目录下会生成各类物体的val结果，将本工具放在result目录下执行，会print出各种物体的evalute结果，包括
+# this tool can be used with category command
+# category is a new parameter added to detector.c, which helps to generate each class evalute result
+# run following: ./darknet detector category cfg/paul.data cfg/yolo-paul.cfg backup/yolo-paul_final.weights
+# the each class val result will be put into result dir, if you run this tool at result dir, the evalute results will be printed, including
 # id,avg_iou,avg_correct_iou,avg_precision,avg_recall,avg_score
-# result目录下会生成low_list和high_list，内容分别为精度和recall未达标和达标的物体种类
-
+# result the low_list and high_list will be generated into result dir，the contents is the accuace and the recall of true and false classes
 
 import os
 from os import listdir, getcwd
 from os.path import join
 import shutil
 
-# 共有多少类物体
-class_num = 97
 
-
-# 每类物体的验证结果
+# validate result of each category
 class CategoryValidation:
     id = 0  # Category id
     path = ""  # path
-    total_num = 0  # 标注文件中该类bounding box的总数
-    proposals_num = 0  # validate结果中共预测了多少个该类的bounding box
-    correct_num = 0  # 预测正确的bounding box（与Ground-truth的IOU大于0.5且种类正确）的数量
-    iou_num = 0  # 所有大于0.5的IOU的数量
-    iou_sum = 0  # 所有大于0.5的IOU的IOU之和
-    correct_iou_sum = 0  # 预测正确的bounding box的IOU之和
-    score_sum = 0  # 所有正确预测的bounding box的概率之和
-    avg_iou = 0  # 无论预测的bounding box的object的种类是否正确，所有bounding box 与最吻合的Ground-truth求出IOU，对大于0.5的IOU求平均值：avg_iou = iou_sum/iou_num
-    avg_correct_iou = 0  # 对预测正确的bounding box的IOU求平均值：avg_correct_iou = correct_iou_sum/correct_num
+    total_num = 0  # the total bounding box num in labeled files
+    proposals_num = 0  # validate results predict the total num bounding box at this category
+    correct_num = 0  # the num of true bounding box that predicted(based on the IOU greater 0.5 and the category predict correct)
+    iou_num = 0  # the total num of IOU greater 0.5
+    iou_sum = 0  # the sum of the total num of IOU greater 0.5
+    correct_iou_sum = 0  # the total num of correct predicted bounding box
+    score_sum = 0  # the sum of score that correctly predicted bounding box
+    avg_iou = 0  # no matter the bounding box of object is predicted corrected, all the bounding box match Ground-truth best and get IOU, then for the IOU greater 0.5, calculate the avg ad: avg_iou = iou_sum/iou_num
+    avg_correct_iou = 0  # avg the correct predicted bounding box IOU：avg_correct_iou = correct_iou_sum/correct_num
     avg_precision = 0  # avg_precision = correct_num/proposals_num
     avg_recall = 0  # avg_recall = correct_num/total_num
     avg_score = 0  # avg_score=score_sum/correct_num
@@ -69,7 +65,7 @@ class CategoryValidation:
 
         f.close()
 
-    # 导出识别正确的图片列表
+    # save the correctly predicted image list
     def get_correct_list(self):
         f = open(self.path)
         new_f_name = "correct_list_" + self.id + ".txt"
@@ -80,7 +76,7 @@ class CategoryValidation:
                 new_f.write(line)
         f.close()
 
-    # 导出识别错误的图片列表
+    # save the wrong predicted image list
     def get_error_list(self):
         f = open(self.path)
         new_f_name = "error_list_" + self.id + ".txt"
@@ -109,7 +105,7 @@ def IsSubString(SubStrList, Str):
     return flag
 
 
-# 获取FindPath路径下指定格式（FlagStr）的文件名列表
+# get the file name list in path of FindPath which format with FlagStr
 def GetFileList(FindPath, FlagStr=[]):
     import os
     FileList = []
@@ -128,10 +124,11 @@ def GetFileList(FindPath, FlagStr=[]):
     return FileList
 
 
-# 获取所有物体种类的ROI数目
-# path是图片列表的地址
-# 返回值是一个list，list的索引是物体种类在yolo中的id，值是该种物体的ROI数量
-def get_val_cat_num(path):
+# get the total num of ROI for all the object classes
+# path is the file of image name list
+# return a list，the index of list is the id of object class,
+#           the value is the ROI num of this object class
+def get_val_cat_num(path, class_num):
     val_cat_num = []
     for i in range(0, class_num):
         val_cat_num.append(0)
@@ -152,9 +149,9 @@ def get_val_cat_num(path):
     return val_cat_num
 
 
-# 获取物体名list
-# path是物体名list文件地址
-# 返回值是一个列表，列表的索引是类的id，值为该类物体的名字
+# get object name list
+# path is the object file list
+# return a list，the index of list is the id of object class, the value is the ROI num of this object class
 def get_name_list(path):
     name_list = []
     f = open(path)
@@ -164,9 +161,12 @@ def get_name_list(path):
     return name_list
 
 
+# the total class num
+class_num = 97
 wd = getcwd()
+
 val_result_list = GetFileList(wd, ['txt'])
-val_cat_num = get_val_cat_num("/raid/pengchong_data/Data/filelists/val.txt")
+val_cat_num = get_val_cat_num("/raid/pengchong_data/Data/filelists/val.txt", class_num)
 name_list = get_name_list("/raid/pengchong_data/Tools/Paul_YOLO/data/paul_list.txt")
 low_list = open("low_list.log", 'w')
 high_list = open("high_list.log", 'w')

@@ -1,5 +1,8 @@
 backup
 bad.list
+core.*
 predictions.jpg
 /data/
 tmp/
+output_tmp
+results

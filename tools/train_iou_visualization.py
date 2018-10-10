@@ -3,8 +3,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 #%matplotlib inline
 
-lines =525990
-result = pd.read_csv('S:/Tools/Paul_YOLO/paul_train_log_new.txt', skiprows=[x for x in range(lines) if (x%10==0 or x%10==9) ] ,error_bad_lines=False, names=['Region Avg IOU', 'Class', 'Obj', 'No Obj', 'Avg Recall','count'])
+lines = 525990
+log_iou_file = 'paul_train_log_iou.txt'
+result = pd.read_csv(log_iou_file, skiprows=[x for x in range(lines) if (x%10==0 or x%10==9) ] ,error_bad_lines=False, names=['Region Avg IOU', 'Class', 'Obj', 'No Obj', 'Avg Recall','count'])
 result.head()
 
 result['Region Avg IOU']=result['Region Avg IOU'].str.split(': ').str.get(1)

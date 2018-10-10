@@ -4,7 +4,8 @@ import matplotlib.pyplot as plt
 #%matplotlib inline
 
 lines =1878760
-result = pd.read_csv('S:/Tools/Paul_YOLO/paul_train_log_new.txt', skiprows=[x for x in range(lines) if ((x%10!=9) |(x<1000))] ,error_bad_lines=False, names=['loss', 'avg', 'rate', 'seconds', 'images'])
+log_loss_file = 'paul_train_log_loss.txt'
+result = pd.read_csv(log_loss_file, skiprows=[x for x in range(lines) if ((x%10!=9) |(x<1000))] ,error_bad_lines=False, names=['loss', 'avg', 'rate', 'seconds', 'images'])
 result.head()
 
 result['loss']=result['loss'].str.split(' ').str.get(1)
